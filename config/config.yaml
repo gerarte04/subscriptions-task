@@ -22,9 +22,9 @@ data:
 
 paths:
   api: /api/v1
-  get_sub: /subs
+  get_sub: /subs/{id}
   post_sub: /subs
-  put_sub: /subs
-  delete_sub: /subs
+  put_sub: /subs/{id}
+  delete_sub: /subs/{id}
   list_subs: /subs
   get_summary: /subs/summary

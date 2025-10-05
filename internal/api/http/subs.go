@@ -54,7 +54,7 @@ func (h *SubHandler) WithSubHandlers() handlers.RouterOption {
 // @Failure 	500 {string} 	string "Internal error"
 // @Router		/subs/{id} 		[get]
 func (h *SubHandler) getSubHandler(w http.ResponseWriter, r *http.Request) {
-	req, err := types.CreateGetSubRequest(r, h.pathCfg.GetSub)
+	req, err := types.CreateGetSubRequest(r)
 	if err != nil {
 		response.ProcessCreatingRequestError(w, err, h.svcCfg.DebugMode)
 		return
@@ -109,7 +109,7 @@ func (h *SubHandler) postSubHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 	500 {string} 			string "Internal error"
 // @Router		/subs/{id}				[put]
 func (h *SubHandler) putSubHandler(w http.ResponseWriter, r *http.Request) {
-	req, err := types.CreatePutSubRequest(r, h.dataCfg, h.pathCfg.PutSub)
+	req, err := types.CreatePutSubRequest(r, h.dataCfg)
 	if err != nil {
 		response.ProcessCreatingRequestError(w, err, h.svcCfg.DebugMode)
 		return
@@ -134,7 +134,7 @@ func (h *SubHandler) putSubHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 	500 {string} 			string "Internal error"
 // @Router		/subs/{id}				[delete]
 func (h *SubHandler) deleteSubHandler(w http.ResponseWriter, r *http.Request) {
-	req, err := types.CreateDeleteSubRequest(r, h.pathCfg.DeleteSub)
+	req, err := types.CreateDeleteSubRequest(r)
 	if err != nil {
 		response.ProcessCreatingRequestError(w, err, h.svcCfg.DebugMode)
 		return

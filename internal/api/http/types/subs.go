@@ -7,8 +7,8 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"net/http"
+	"path"
 	"strconv"
-	"strings"
 	"subs-service/internal/config"
 	"subs-service/internal/domain"
 
@@ -33,10 +33,10 @@ type GetSubRequest struct {
 	Id uuid.UUID
 }
 
-func CreateGetSubRequest(r *http.Request, pathPrefix string) (*GetSubRequest, error) {
+func CreateGetSubRequest(r *http.Request) (*GetSubRequest, error) {
 	const op = "CreateGetSubRequest"
 
-	id, err := uuid.Parse(strings.TrimPrefix(r.URL.Path, pathPrefix+"/"))
+	id, err := uuid.Parse(path.Base(r.URL.Path))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -71,12 +71,12 @@ type PutSubRequest struct {
 	Sub domain.Sub
 }
 
-func CreatePutSubRequest(r *http.Request, cfg config.DataConfig, pathPrefix string) (*PutSubRequest, error) {
+func CreatePutSubRequest(r *http.Request, cfg config.DataConfig) (*PutSubRequest, error) {
 	const op = "CreatePutSubRequest"
 
 	var req PutSubRequest
 
-	id, err := uuid.Parse(strings.TrimPrefix(r.URL.Path, pathPrefix+"/"))
+	id, err := uuid.Parse(path.Base(r.URL.Path))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -100,10 +100,10 @@ type DeleteSubRequest struct {
 	Id uuid.UUID
 }
 
-func CreateDeleteSubRequest(r *http.Request, pathPrefix string) (*DeleteSubRequest, error) {
+func CreateDeleteSubRequest(r *http.Request) (*DeleteSubRequest, error) {
 	const op = "DeleteSubRequest"
 
-	id, err := uuid.Parse(strings.TrimPrefix(r.URL.Path, pathPrefix+"/"))
+	id, err := uuid.Parse(path.Base(r.URL.Path))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

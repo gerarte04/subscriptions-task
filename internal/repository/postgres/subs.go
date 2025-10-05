@@ -45,32 +45,33 @@ func (r *SubsRepo) GetSub(ctx context.Context, id uuid.UUID) (*domain.Sub, error
 	return &sub, nil
 }
 
-func (r *SubsRepo) PostSub(ctx context.Context, sub *domain.Sub) (*domain.Sub, error) {
+func (r *SubsRepo) PostSub(ctx context.Context, sub *domain.Sub) (uuid.UUID, error) {
 	const op = "SubsRepo.PostSub"
 
 	query := 
 		`INSERT INTO subs (user_id, service_name, price, start_date, end_date)
 			VALUES ($1, $2, $3, $4, $5) RETURNING id`
 
+	var subId uuid.UUID
 	err := r.pool.QueryRow(
 		ctx, query,
 		sub.UserId, sub.ServiceName, sub.Price, sub.StartDate, sub.EndDate,
-	).Scan(&sub.Id)
+	).Scan(&subId)
 
 	if err != nil {
 		pgErr := pkgPostgres.DetectError(err)
 
 		if errors.Is(pgErr, database.ErrCheckViolation) {
-			return nil, fmt.Errorf("%s: %w", op, repository.ErrInvalidSubData)
+			return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrInvalidSubData)
 		}
 
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return sub, nil
+	return subId, nil
 }
 
-func (r *SubsRepo) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) (*domain.Sub, error) {
+func (r *SubsRepo) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) error {
 	const op = "SubsRepo.PutSub"
 
 	query :=
@@ -86,36 +87,34 @@ func (r *SubsRepo) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) (*
 		pgErr := pkgPostgres.DetectError(err)
 
 		if errors.Is(pgErr, database.ErrCheckViolation) {
-			return nil, fmt.Errorf("%s: %w", op, repository.ErrInvalidSubData)
+			return fmt.Errorf("%s: %w", op, repository.ErrInvalidSubData)
 		}
 
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if tag.RowsAffected() != 1 {
-		return nil, fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
+		return fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
 	}
 
-	sub.Id = id
-
-	return sub, nil
+	return nil
 }
 
-func (r *SubsRepo) DeleteSub(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+func (r *SubsRepo) DeleteSub(ctx context.Context, id uuid.UUID) error {
 	const op = "SubsRepo.DeleteSub"
 
 	query := "DELETE FROM subs WHERE id = $1"
 
 	tag, err := r.pool.Exec(ctx, query, id)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if tag.RowsAffected() != 1 {
-		return uuid.Nil, fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
+		return fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
 	}
 
-	return id, nil
+	return nil
 }
 
 func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*domain.Sub, error) {

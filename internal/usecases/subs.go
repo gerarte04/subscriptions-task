@@ -1,4 +1,4 @@
-package repository
+package usecases
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type SubsRepo interface {
+type SubService interface {
 	GetSub(ctx context.Context, id uuid.UUID) (*domain.Sub, error)
 	PostSub(ctx context.Context, sub *domain.Sub) (*domain.Sub, error)
 	PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) (*domain.Sub, error)

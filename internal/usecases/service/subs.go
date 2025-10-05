@@ -84,5 +84,8 @@ func (s *SubService) GetSummary(ctx context.Context, opts domain.FilterOpts) (*d
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	sum.ServiceName = opts.ServiceName
+	sum.UserId = opts.UserId
+
 	return sum, nil
 }

@@ -1,0 +1,358 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Subscriptions Service API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/subs": {
+            "get": {
+                "description": "Параметр user_id обязателен для получения списка подписок. Опционально поддерживается фильтрация по названию сервиса.\nТакже поддерживается keyset пагинация - опционально можно указать размер страницы (по умолчанию 20) и токен для получения следующей страницы (поле next_page_token в теле предыдущего запроса).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subs"
+                ],
+                "summary": "Get user's subscriptions list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User's id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "service_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page token (for keyset pagination)",
+                        "name": "page_token",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully got subs list",
+                        "schema": {
+                            "$ref": "#/definitions/types.ListSubsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Для параметров подписки по умолчанию установлены следующие ограничения:\n- имя сервиса должно быть непустым и не длиннее 50 символов;\n- стоимость подписки должна быть положительной, но не более 100.000.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subs"
+                ],
+                "summary": "Create new subscription",
+                "parameters": [
+                    {
+                        "description": "Sub details",
+                        "name": "sub",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Sub"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully created sub",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Sub"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/subs/summary": {
+            "get": {
+                "description": "Параметр user_id обязателен для получения суммарной стоимости подписок. Опционально поддерживается фильтрация по названию сервиса.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subs"
+                ],
+                "summary": "Get summary of user's subscriptions (e.g. total price)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User's id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "service_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully got summary",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Summary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/subs/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subs"
+                ],
+                "summary": "Get subscription by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subcription's id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully got sub",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Sub"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Object not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subs"
+                ],
+                "summary": "Update subscription's data by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sub's id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Sub details",
+                        "name": "sub",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Sub"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated sub",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Sub"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Object not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subs"
+                ],
+                "summary": "Delete subscription by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sub's id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted sub",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Sub"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Object not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.Sub": {
+            "type": "object",
+            "properties": {
+                "end_date": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "service_name": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Summary": {
+            "type": "object",
+            "properties": {
+                "service_name": {
+                    "type": "string"
+                },
+                "total_price": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListSubsResponse": {
+            "type": "object",
+            "properties": {
+                "next_page_token": {
+                    "type": "string"
+                },
+                "subs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Sub"
+                    }
+                }
+            }
+        }
+    }
+}

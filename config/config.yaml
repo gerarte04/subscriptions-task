@@ -1,0 +1,30 @@
+http:
+  address: 0.0.0.0:8080
+  read_timeout: 5s
+  write_timeout: 5s
+  idle_timeout: 30s
+
+postgres:
+  host: postgres
+  port: 5432
+  db: subscriptions_db
+  user: admin
+  password: adminpass
+
+service:
+  debug_mode: true
+
+data:
+  max_price: 100000
+  max_service_name_length: 50
+  default_page_size: 3
+  max_page_size: 100
+
+paths:
+  api: /api/v1
+  get_sub: /subs
+  post_sub: /subs
+  put_sub: /subs
+  delete_sub: /subs
+  list_subs: /subs
+  get_summary: /subs/summary

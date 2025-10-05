@@ -130,9 +130,7 @@ func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*dom
 		query = fmt.Sprintf("%s AND service_name = $3", query)
 	}
 
-	if opts.PageSize != 0 {
-		query = fmt.Sprintf("%s LIMIT $4", query)
-	}
+	query = fmt.Sprintf("%s ORDER BY id LIMIT $4", query)
 
 	rows, err := r.pool.Query(
 		ctx, query,

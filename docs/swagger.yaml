@@ -1,0 +1,241 @@
+basePath: /api/v1
+definitions:
+  domain.Sub:
+    properties:
+      end_date:
+        type: string
+      price:
+        type: integer
+      service_name:
+        type: string
+      start_date:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.Summary:
+    properties:
+      service_name:
+        type: string
+      total_price:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  types.ListSubsResponse:
+    properties:
+      next_page_token:
+        type: string
+      subs:
+        items:
+          $ref: '#/definitions/domain.Sub'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Subscriptions Service API
+  version: "1.0"
+paths:
+  /subs:
+    get:
+      description: |-
+        Параметр user_id обязателен для получения списка подписок. Опционально поддерживается фильтрация по названию сервиса.
+        Также поддерживается keyset пагинация - опционально можно указать размер страницы (по умолчанию 20) и токен для получения следующей страницы (поле next_page_token в теле предыдущего запроса).
+      parameters:
+      - description: User's id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Service name
+        in: query
+        name: service_name
+        type: string
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      - description: Page token (for keyset pagination)
+        in: query
+        name: page_token
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully got subs list
+          schema:
+            $ref: '#/definitions/types.ListSubsResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get user's subscriptions list
+      tags:
+      - subs
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Для параметров подписки по умолчанию установлены следующие ограничения:
+        - имя сервиса должно быть непустым и не длиннее 50 символов;
+        - стоимость подписки должна быть положительной, но не более 100.000.
+      parameters:
+      - description: Sub details
+        in: body
+        name: sub
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Sub'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created sub
+          schema:
+            $ref: '#/definitions/domain.Sub'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Create new subscription
+      tags:
+      - subs
+  /subs/{id}:
+    delete:
+      parameters:
+      - description: Sub's id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted sub
+          schema:
+            $ref: '#/definitions/domain.Sub'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Object not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Delete subscription by id
+      tags:
+      - subs
+    get:
+      parameters:
+      - description: Subcription's id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully got sub
+          schema:
+            $ref: '#/definitions/domain.Sub'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Object not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get subscription by id
+      tags:
+      - subs
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Sub's id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Sub details
+        in: body
+        name: sub
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Sub'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated sub
+          schema:
+            $ref: '#/definitions/domain.Sub'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Object not found
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Update subscription's data by id
+      tags:
+      - subs
+  /subs/summary:
+    get:
+      description: Параметр user_id обязателен для получения суммарной стоимости подписок.
+        Опционально поддерживается фильтрация по названию сервиса.
+      parameters:
+      - description: User's id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Service name
+        in: query
+        name: service_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully got summary
+          schema:
+            $ref: '#/definitions/domain.Summary'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal error
+          schema:
+            type: string
+      summary: Get summary of user's subscriptions (e.g. total price)
+      tags:
+      - subs
+swagger: "2.0"

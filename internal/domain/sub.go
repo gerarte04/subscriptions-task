@@ -25,7 +25,7 @@ type SubJsonBody struct {
 	ServiceName string `json:"service_name"`
 	Price       int    `json:"price"`
 	StartDate   string `json:"start_date"`
-	EndDate     string `json:"end_date"`
+	EndDate     string `json:"end_date,omitempty"`
 }
 
 const (
@@ -55,9 +55,11 @@ func (s *Sub) UnmarshalJSON(b []byte) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	s.EndDate, err = time.Parse(TimeLayout, req.EndDate)
-	if err != nil {
+	endDate, err := time.Parse(TimeLayout, req.EndDate)
+	if len(req.EndDate) != 0 && err != nil {
 		return fmt.Errorf("%s: %w", op, err)
+	} else if err == nil {
+		s.EndDate = endDate
 	}
 
 	return nil
@@ -72,7 +74,10 @@ func (s *Sub) MarshalJSON() ([]byte, error) {
 		ServiceName: s.ServiceName,
 		Price:       int(s.Price),
 		StartDate:   s.StartDate.Format(TimeLayout),
-		EndDate:     s.EndDate.Format(TimeLayout),
+	}
+
+	if !s.EndDate.IsZero() {
+		req.EndDate = s.EndDate.Format(TimeLayout)
 	}
 
 	data, err := json.Marshal(&req)

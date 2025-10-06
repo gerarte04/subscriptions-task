@@ -27,7 +27,9 @@ func NewSubsRepo(pool *pgxpool.Pool) *SubsRepo {
 func (r *SubsRepo) GetSub(ctx context.Context, id uuid.UUID) (*domain.Sub, error) {
 	const op = "SubsRepo.GetSub"
 
-	query := `SELECT * FROM subs WHERE id = $1`
+	query :=
+		`SELECT id, user_id, service_name, price, start_date, COALESCE(end_date, '0001-01-01'::date)
+			FROM subs WHERE id = $1`
 
 	var sub domain.Sub
 	err := r.pool.QueryRow(
@@ -50,7 +52,7 @@ func (r *SubsRepo) PostSub(ctx context.Context, sub *domain.Sub) (uuid.UUID, err
 
 	query := 
 		`INSERT INTO subs (user_id, service_name, price, start_date, end_date)
-			VALUES ($1, $2, $3, $4, $5) RETURNING id`
+			VALUES ($1, $2, $3, $4, NULLIF($5, '0001-01-01'::date)) RETURNING id`
 
 	var subId uuid.UUID
 	err := r.pool.QueryRow(
@@ -120,7 +122,9 @@ func (r *SubsRepo) DeleteSub(ctx context.Context, id uuid.UUID) error {
 func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*domain.Sub, error) {
 	const op = "SubRepo.ListSubs"
 
-	query := "SELECT * FROM subs WHERE user_id = $1"
+	query :=
+		`SELECT id, user_id, service_name, price, start_date, COALESCE(end_date, '0001-01-01'::date)
+			FROM subs WHERE user_id = $1`
 	args := []any{opts.UserId}
 	i := 2
 

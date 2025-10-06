@@ -70,6 +70,7 @@ func (h *SubHandler) getSubHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary 	Create new subscription
+// @Description Поле end_date опционально.
 // @Description Для параметров подписки по умолчанию установлены следующие ограничения:
 // @Description - имя сервиса должно быть непустым и не длиннее 50 символов;
 // @Description - стоимость подписки должна быть положительной, но не более 100.000.
@@ -98,6 +99,7 @@ func (h *SubHandler) postSubHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary 	Update subscription's data by id
+// @Description Требования к телу запроса такие же, как и у post запроса на создание подписки.
 // @Tags 		subs
 // @Accept 		json
 // @Produce 	json

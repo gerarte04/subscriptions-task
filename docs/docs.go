@@ -22,7 +22,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "subs"
+                    "list"
                 ],
                 "summary": "Get user's subscriptions list",
                 "parameters": [
@@ -46,7 +46,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Page token (for keyset pagination)",
                         "name": "page_token",
                         "in": "query"
@@ -125,7 +125,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "subs"
+                    "summary"
                 ],
                 "summary": "Get summary of user's subscriptions (e.g. total price)",
                 "parameters": [

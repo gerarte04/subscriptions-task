@@ -173,12 +173,21 @@ func CreateGetSummaryRequest(r *http.Request, cfg config.DataConfig) (*GetSummar
 
 type ListSubsResponse struct {
 	Subs          []*domain.Sub `json:"subs"`
-	NextPageToken string        `json:"next_page_token"`
+	NextPageToken string        `json:"next_page_token,omitempty"`
 }
 
 func CreateListSubsResponse(subs []*domain.Sub) *ListSubsResponse {
-	return &ListSubsResponse{
-		Subs: subs,
-		NextPageToken: subs[len(subs) - 1].Id.String(),
+	var token string
+	if len(subs) != 0 {
+		token = subs[len(subs)-1].Id.String()
 	}
+
+	return &ListSubsResponse{
+		Subs:          subs,
+		NextPageToken: token,
+	}
+}
+
+type DeleteSubResponse struct {
+	DeletedId string `json:"deleted_id"`
 }

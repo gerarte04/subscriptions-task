@@ -146,18 +146,18 @@ func (h *SubHandler) deleteSubHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.WriteResponse(w, res, http.StatusOK)
+	response.WriteResponse(w, types.DeleteSubResponse{DeletedId: res.String()}, http.StatusOK)
 }
 
 // @Summary 	Get user's subscriptions list
 // @Description Параметр user_id обязателен для получения списка подписок. Опционально поддерживается фильтрация по названию сервиса.
 // @Description Также поддерживается keyset пагинация - опционально можно указать размер страницы (по умолчанию 20) и токен для получения следующей страницы (поле next_page_token в теле предыдущего запроса).
-// @Tags 		subs
+// @Tags 		list
 // @Produce 	json
 // @Param 		user_id 		query 	string true "User's id"
 // @Param 		service_name 	query 	string false "Service name"
 // @Param 		page_size 		query 	int false "Page size"
-// @Param 		page_token 		query 	int false "Page token (for keyset pagination)"
+// @Param 		page_token 		query 	string false "Page token (for keyset pagination)"
 // @Success 	200 {object} 			types.ListSubsResponse "Successfully got subs list"
 // @Failure 	400 {string} 			string "Bad request"
 // @Failure 	500 {string} 			string "Internal error"
@@ -180,7 +180,7 @@ func (h *SubHandler) listSubsHandler(w http.ResponseWriter, r *http.Request) {
 
 // @Summary 	Get summary of user's subscriptions (e.g. total price)
 // @Description Параметр user_id обязателен для получения суммарной стоимости подписок. Опционально поддерживается фильтрация по названию сервиса.
-// @Tags 		subs
+// @Tags 		summary
 // @Produce 	json
 // @Param 		user_id 		query 	string true "User's id"
 // @Param 		service_name 	query 	string false "Service name"

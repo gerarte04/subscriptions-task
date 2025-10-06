@@ -59,7 +59,7 @@ paths:
       - description: Page token (for keyset pagination)
         in: query
         name: page_token
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -77,7 +77,7 @@ paths:
             type: string
       summary: Get user's subscriptions list
       tags:
-      - subs
+      - list
     post:
       consumes:
       - application/json
@@ -237,5 +237,5 @@ paths:
             type: string
       summary: Get summary of user's subscriptions (e.g. total price)
       tags:
-      - subs
+      - summary
 swagger: "2.0"

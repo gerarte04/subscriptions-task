@@ -17,7 +17,7 @@ service:
 data:
   max_price: 100000
   max_service_name_length: 50
-  default_page_size: 3
+  default_page_size: 20
   max_page_size: 100
 
 paths:

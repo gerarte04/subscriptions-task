@@ -11,6 +11,8 @@ postgres:
   user: admin
   password: adminpass
 
+# Debug Mode: клиенту возвращается полный лог ошибки
+# При отключении возвращается лишь суть ошибки (корневая ошибка в цепочке wrap'ов)
 service:
   debug_mode: true
 

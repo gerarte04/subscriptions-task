@@ -121,21 +121,25 @@ func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*dom
 	const op = "SubRepo.ListSubs"
 
 	query := "SELECT * FROM subs WHERE user_id = $1"
+	args := []any{opts.UserId}
+	i := 2
 
 	if opts.PageToken != uuid.Nil {
-		query = fmt.Sprintf("%s AND id > $2", query)
+		query = fmt.Sprintf("%s AND id > $%d", query, i)
+		args = append(args, opts.PageToken)
+		i++
 	}
 
 	if len(opts.ServiceName) != 0 {
-		query = fmt.Sprintf("%s AND service_name = $3", query)
+		query = fmt.Sprintf("%s AND service_name = $%d", query, i)
+		args = append(args, opts.ServiceName)
+		i++
 	}
 
-	query = fmt.Sprintf("%s ORDER BY id LIMIT $4", query)
+	query = fmt.Sprintf("%s ORDER BY id LIMIT $%d", query, i)
+	args = append(args, opts.PageSize)
 
-	rows, err := r.pool.Query(
-		ctx, query,
-		opts.UserId, opts.PageToken, opts.ServiceName, opts.PageSize,
-	)
+	rows, err := r.pool.Query(ctx, query, args...)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -161,17 +165,16 @@ func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*dom
 func (r *SubsRepo) GetSummary(ctx context.Context, opts domain.FilterOpts) (*domain.Summary, error) {
 	const op = "SubRepo.GetSummary"
 
-	query := "SELECT SUM(price) FROM subs WHERE user_id = $1"
+	query := "SELECT COALESCE(SUM(price), 0) FROM subs WHERE user_id = $1"
+	args := []any{opts.UserId}
 
 	if len(opts.ServiceName) != 0 {
 		query = fmt.Sprintf("%s AND service_name = $2", query)
+		args = append(args, opts.ServiceName)
 	}
 
 	var sum domain.Summary
-	err := r.pool.QueryRow(
-		ctx, query,
-		opts.UserId, opts.ServiceName,
-	).Scan(&sum.TotalPrice)
+	err := r.pool.QueryRow(ctx, query, args...).Scan(&sum.TotalPrice)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)

@@ -3,5 +3,5 @@ package usecases
 import "errors"
 
 var (
-	ErrWrongPassword = errors.New("Wrong user password")
+	ErrWrongPassword = errors.New("wrong user password")
 )

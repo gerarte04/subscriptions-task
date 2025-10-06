@@ -60,7 +60,7 @@ func (h *SubHandler) getSubHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.subSvc.GetSub(r.Context(), req.Id)
+	res, err := h.subSvc.GetSub(r.Context(), req.ID)
 	if err != nil {
 		response.ProcessError(w, err, h.svcCfg.DebugMode)
 		return
@@ -117,7 +117,7 @@ func (h *SubHandler) putSubHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.subSvc.PutSub(r.Context(), req.Id, &req.Sub)
+	res, err := h.subSvc.PutSub(r.Context(), req.ID, &req.Sub)
 	if err != nil {
 		response.ProcessError(w, err, h.svcCfg.DebugMode)
 		return
@@ -142,18 +142,19 @@ func (h *SubHandler) deleteSubHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.subSvc.DeleteSub(r.Context(), req.Id)
+	res, err := h.subSvc.DeleteSub(r.Context(), req.ID)
 	if err != nil {
 		response.ProcessError(w, err, h.svcCfg.DebugMode)
 		return
 	}
 
-	response.WriteResponse(w, types.DeleteSubResponse{DeletedId: res.String()}, http.StatusOK)
+	response.WriteResponse(w, types.DeleteSubResponse{DeletedID: res.String()}, http.StatusOK)
 }
 
 // @Summary 	Get user's subscriptions list
 // @Description Параметр user_id обязателен для получения списка подписок. Опционально поддерживается фильтрация по названию сервиса.
-// @Description Также поддерживается keyset пагинация - опционально можно указать размер страницы (по умолчанию 20) и токен для получения следующей страницы (поле next_page_token в теле предыдущего запроса).
+// @Description Также поддерживается keyset пагинация - опционально можно указать размер страницы (по умолчанию 20)
+// @Description и токен для получения следующей страницы (поле next_page_token в теле предыдущего запроса).
 // @Tags 		list
 // @Produce 	json
 // @Param 		user_id 		query 	string true "User's id"

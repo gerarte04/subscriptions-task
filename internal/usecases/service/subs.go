@@ -38,7 +38,7 @@ func (s *SubService) PostSub(ctx context.Context, sub *domain.Sub) (*domain.Sub,
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	sub.Id = id
+	sub.ID = id
 
 	return sub, nil
 }
@@ -50,7 +50,7 @@ func (s *SubService) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) 
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	sub.Id = id
+	sub.ID = id
 
 	return sub, nil
 }
@@ -85,7 +85,7 @@ func (s *SubService) GetSummary(ctx context.Context, opts domain.FilterOpts) (*d
 	}
 
 	sum.ServiceName = opts.ServiceName
-	sum.UserId = opts.UserId
+	sum.UserID = opts.UserID
 
 	return sum, nil
 }

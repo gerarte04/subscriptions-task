@@ -34,11 +34,11 @@ func (r *SubsRepo) GetSub(ctx context.Context, id uuid.UUID) (*domain.Sub, error
 	var sub domain.Sub
 	err := r.pool.QueryRow(
 		ctx, query, id,
-	).Scan(&sub.Id, &sub.UserId, &sub.ServiceName, &sub.Price, &sub.StartDate, &sub.EndDate)
+	).Scan(&sub.ID, &sub.UserID, &sub.ServiceName, &sub.Price, &sub.StartDate, &sub.EndDate)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
+			return nil, fmt.Errorf("%s: %w", op, repository.ErrNoSubIDExists)
 		}
 
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -54,11 +54,11 @@ func (r *SubsRepo) PostSub(ctx context.Context, sub *domain.Sub) (uuid.UUID, err
 		`INSERT INTO subs (user_id, service_name, price, start_date, end_date)
 			VALUES ($1, $2, $3, $4, NULLIF($5, '0001-01-01'::date)) RETURNING id`
 
-	var subId uuid.UUID
+	var subID uuid.UUID
 	err := r.pool.QueryRow(
 		ctx, query,
-		sub.UserId, sub.ServiceName, sub.Price, sub.StartDate, sub.EndDate,
-	).Scan(&subId)
+		sub.UserID, sub.ServiceName, sub.Price, sub.StartDate, sub.EndDate,
+	).Scan(&subID)
 
 	if err != nil {
 		pgErr := pkgPostgres.DetectError(err)
@@ -70,7 +70,7 @@ func (r *SubsRepo) PostSub(ctx context.Context, sub *domain.Sub) (uuid.UUID, err
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return subId, nil
+	return subID, nil
 }
 
 func (r *SubsRepo) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) error {
@@ -82,7 +82,7 @@ func (r *SubsRepo) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) er
 
 	tag, err := r.pool.Exec(
 		ctx, query,
-		sub.UserId, sub.ServiceName, sub.Price, sub.StartDate, sub.EndDate, id,
+		sub.UserID, sub.ServiceName, sub.Price, sub.StartDate, sub.EndDate, id,
 	)
 
 	if err != nil {
@@ -96,7 +96,7 @@ func (r *SubsRepo) PutSub(ctx context.Context, id uuid.UUID, sub *domain.Sub) er
 	}
 
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
+		return fmt.Errorf("%s: %w", op, repository.ErrNoSubIDExists)
 	}
 
 	return nil
@@ -113,7 +113,7 @@ func (r *SubsRepo) DeleteSub(ctx context.Context, id uuid.UUID) error {
 	}
 
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("%s: %w", op, repository.ErrNoSubIdExists)
+		return fmt.Errorf("%s: %w", op, repository.ErrNoSubIDExists)
 	}
 
 	return nil
@@ -125,7 +125,7 @@ func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*dom
 	query :=
 		`SELECT id, user_id, service_name, price, start_date, COALESCE(end_date, '0001-01-01'::date)
 			FROM subs WHERE user_id = $1`
-	args := []any{opts.UserId}
+	args := []any{opts.UserID}
 	i := 2
 
 	if opts.PageToken != uuid.Nil {
@@ -154,8 +154,8 @@ func (r *SubsRepo) ListSubs(ctx context.Context, opts domain.FilterOpts) ([]*dom
 	for rows.Next() {
 		var sub domain.Sub
 
-		if err := rows.Scan(
-			&sub.Id, &sub.UserId, &sub.ServiceName, &sub.Price, &sub.StartDate, &sub.EndDate,
+		if err = rows.Scan(
+			&sub.ID, &sub.UserID, &sub.ServiceName, &sub.Price, &sub.StartDate, &sub.EndDate,
 		); err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -170,7 +170,7 @@ func (r *SubsRepo) GetSummary(ctx context.Context, opts domain.FilterOpts) (*dom
 	const op = "SubRepo.GetSummary"
 
 	query := "SELECT COALESCE(SUM(price), 0) FROM subs WHERE user_id = $1"
-	args := []any{opts.UserId}
+	args := []any{opts.UserID}
 
 	if len(opts.ServiceName) != 0 {
 		query = fmt.Sprintf("%s AND service_name = $2", query)

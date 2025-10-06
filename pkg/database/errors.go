@@ -3,8 +3,8 @@ package database
 import "errors"
 
 var (
-	ErrForeignKeyViolation = errors.New("Foreign key violation")
-	ErrUniqueViolation = errors.New("Unique violation")
-	ErrCheckViolation = errors.New("Check violation")
-	ErrUndocumented = errors.New("Undocumented database error")
+	ErrForeignKeyViolation = errors.New("foreign key violation")
+	ErrUniqueViolation = errors.New("unique violation")
+	ErrCheckViolation = errors.New("check violation")
+	ErrUndocumented = errors.New("undocumented database error")
 )

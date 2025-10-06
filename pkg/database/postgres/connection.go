@@ -8,16 +8,16 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PostgresConfig struct {
+type Config struct {
 	Host 				string			`yaml:"host" env:"POSTGRES_HOST" env-required:"true"`
 	Port 				string			`yaml:"port" env:"POSTGRES_PORT" env-required:"true"`
-	DbName 				string			`yaml:"db" env:"POSTGRES_DB" env-required:"true"`
+	DBName 				string			`yaml:"db" env:"POSTGRES_DB" env-required:"true"`
 	User 				string			`yaml:"user" env:"POSTGRES_USER" env-required:"true"`
 	Password 			string			`yaml:"password" env:"POSTGRES_PASSWORD" env-required:"true"`
 	ConnectionTimeout	time.Duration	`yaml:"connection_timeout" env-default:"300ms"`
 }
 
-func NewPostgresPool(cfg PostgresConfig) (*pgxpool.Pool, error) {
+func NewPostgresPool(cfg Config) (*pgxpool.Pool, error) {
 	const method = "postgres.NewPostgresPool"
 
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
@@ -25,7 +25,7 @@ func NewPostgresPool(cfg PostgresConfig) (*pgxpool.Pool, error) {
 
 	pginfo := fmt.Sprintf(
 		"host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
-		cfg.Host, cfg.Port, cfg.DbName, cfg.User, cfg.Password,
+		cfg.Host, cfg.Port, cfg.DBName, cfg.User, cfg.Password,
 	)
 
 	pool, err := pgxpool.New(ctx, pginfo)

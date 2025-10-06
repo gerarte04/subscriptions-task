@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	_ "subs-service/docs"
-	apiHttp "subs-service/internal/api/http"
+	apiHTTP "subs-service/internal/api/http"
 	"subs-service/internal/config"
 	repo "subs-service/internal/repository/postgres"
 	"subs-service/internal/usecases/service"
@@ -30,18 +30,18 @@ func main() {
 	pool, err := postgres.NewPostgresPool(cfg.PostgresCfg)
 	if err != nil {
 		log.Fatalf("Failed to connect PostgreSQL: %s", err.Error())
-	} else {
-		log.Printf("Connected to PostgreSQL successfully")
 	}
+
+	log.Printf("Connected to PostgreSQL successfully")
 
 	subsRepo := repo.NewSubsRepo(pool)
 	subService := service.NewSubService(subsRepo)
-	subHandler := apiHttp.NewSubHandler(subService, cfg.PathCfg, cfg.SvcCfg, cfg.DataCfg)
+	subHandler := apiHTTP.NewSubHandler(subService, cfg.PathCfg, cfg.SvcCfg, cfg.DataCfg)
 
 	log.Printf("All services were created successfully")
 
 	r := chi.NewRouter()
-	handlers.RouteHandlers(r, cfg.PathCfg.Api,
+	handlers.RouteHandlers(r, cfg.PathCfg.API,
 		handlers.WithLogger(),
 		handlers.WithRecovery(),
 		handlers.WithSwagger(),
@@ -49,9 +49,9 @@ func main() {
 		subHandler.WithSubHandlers(),
 	)
 
-	log.Printf("Starting HTTP server at %s...", cfg.HttpCfg.Address)
+	log.Printf("Starting HTTP server at %s...", cfg.HTTPCfg.Address)
 
-	if err := server.CreateServer(r, cfg.HttpCfg); err != nil {
+	if err = server.CreateServer(r, cfg.HTTPCfg); err != nil {
 		log.Fatalf("Failed to start server: %s", err.Error())
 	}
 }

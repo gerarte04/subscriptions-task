@@ -3,9 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
 	"net/http"
 	"path"
 	"strconv"
@@ -30,7 +27,7 @@ func checkPageSize(size int, cfg config.DataConfig) bool {
 // Requests ----------------------------------------------------------------------
 
 type GetSubRequest struct {
-	Id uuid.UUID
+	ID uuid.UUID
 }
 
 func CreateGetSubRequest(r *http.Request) (*GetSubRequest, error) {
@@ -41,7 +38,7 @@ func CreateGetSubRequest(r *http.Request) (*GetSubRequest, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &GetSubRequest{Id: id}, nil
+	return &GetSubRequest{ID: id}, nil
 }
 
 type PostSubRequest struct {
@@ -67,7 +64,7 @@ func CreatePostSubRequest(r *http.Request, cfg config.DataConfig) (*PostSubReque
 }
 
 type PutSubRequest struct {
-	Id  uuid.UUID
+	ID  uuid.UUID
 	Sub domain.Sub
 }
 
@@ -81,9 +78,9 @@ func CreatePutSubRequest(r *http.Request, cfg config.DataConfig) (*PutSubRequest
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	req.Id = id
+	req.ID = id
 
-	if err := json.NewDecoder(r.Body).Decode(&req.Sub); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&req.Sub); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -97,7 +94,7 @@ func CreatePutSubRequest(r *http.Request, cfg config.DataConfig) (*PutSubRequest
 }
 
 type DeleteSubRequest struct {
-	Id uuid.UUID
+	ID uuid.UUID
 }
 
 func CreateDeleteSubRequest(r *http.Request) (*DeleteSubRequest, error) {
@@ -108,7 +105,7 @@ func CreateDeleteSubRequest(r *http.Request) (*DeleteSubRequest, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &DeleteSubRequest{Id: id}, nil
+	return &DeleteSubRequest{ID: id}, nil
 }
 
 type ListSubsRequest struct {
@@ -127,7 +124,7 @@ func CreateListSubsRequest(r *http.Request, cfg config.DataConfig) (*ListSubsReq
 
 	var err error
 
-	req.Opts.UserId, err = uuid.Parse(r.URL.Query().Get("user_id"))
+	req.Opts.UserID, err = uuid.Parse(r.URL.Query().Get("user_id"))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -136,11 +133,13 @@ func CreateListSubsRequest(r *http.Request, cfg config.DataConfig) (*ListSubsReq
 		req.Opts.ServiceName = serviceName
 	}
 
-	if pageSize, err := strconv.Atoi(r.URL.Query().Get("page_size")); err == nil && checkPageSize(pageSize, cfg) {
+	var pageSize int
+	if pageSize, err = strconv.Atoi(r.URL.Query().Get("page_size")); err == nil && checkPageSize(pageSize, cfg) {
 		req.Opts.PageSize = pageSize
 	}
 
-	if pageToken, err := uuid.Parse(r.URL.Query().Get("page_token")); err == nil {
+	var pageToken uuid.UUID
+	if pageToken, err = uuid.Parse(r.URL.Query().Get("page_token")); err == nil {
 		req.Opts.PageToken = pageToken
 	}
 
@@ -157,12 +156,12 @@ func CreateGetSummaryRequest(r *http.Request, cfg config.DataConfig) (*GetSummar
 	var req GetSummaryRequest
 	var err error
 
-	req.Opts.UserId, err = uuid.Parse(r.URL.Query().Get("user_id"))
+	req.Opts.UserID, err = uuid.Parse(r.URL.Query().Get("user_id"))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if serviceName := r.URL.Query().Get("service_name"); len(serviceName) != 0 {
+	if serviceName := r.URL.Query().Get("service_name"); checkServiceName(serviceName, cfg) {
 		req.Opts.ServiceName = serviceName
 	}
 
@@ -179,7 +178,7 @@ type ListSubsResponse struct {
 func CreateListSubsResponse(subs []*domain.Sub) *ListSubsResponse {
 	var token string
 	if len(subs) != 0 {
-		token = subs[len(subs)-1].Id.String()
+		token = subs[len(subs)-1].ID.String()
 	}
 
 	return &ListSubsResponse{
@@ -189,5 +188,5 @@ func CreateListSubsResponse(subs []*domain.Sub) *ListSubsResponse {
 }
 
 type DeleteSubResponse struct {
-	DeletedId string `json:"deleted_id"`
+	DeletedID string `json:"deleted_id"`
 }

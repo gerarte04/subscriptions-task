@@ -9,8 +9,8 @@ import (
 )
 
 type Sub struct {
-	Id     uuid.UUID `json:"id" swaggerignore:"true"`
-	UserId uuid.UUID `json:"user_id"`
+	ID     uuid.UUID `json:"id" swaggerignore:"true"`
+	UserID uuid.UUID `json:"user_id"`
 
 	ServiceName string    `json:"service_name"`
 	Price       int64     `json:"price"`
@@ -18,9 +18,9 @@ type Sub struct {
 	EndDate     time.Time `json:"end_date"`
 }
 
-type SubJsonBody struct {
-	Id     string `json:"id"`
-	UserId string `json:"user_id"`
+type SubJSONBody struct {
+	ID     string `json:"id"`
+	UserID string `json:"user_id"`
 
 	ServiceName string `json:"service_name"`
 	Price       int    `json:"price"`
@@ -35,7 +35,7 @@ const (
 func (s *Sub) UnmarshalJSON(b []byte) error {
 	const op = "Sub.UnmarshalJSON"
 
-	var req SubJsonBody
+	var req SubJSONBody
 	if err := json.Unmarshal(b, &req); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -45,7 +45,7 @@ func (s *Sub) UnmarshalJSON(b []byte) error {
 
 	var err error
 
-	s.UserId, err = uuid.Parse(req.UserId)
+	s.UserID, err = uuid.Parse(req.UserID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -68,9 +68,9 @@ func (s *Sub) UnmarshalJSON(b []byte) error {
 func (s *Sub) MarshalJSON() ([]byte, error) {
 	const op = "Sub.MarshalJSON"
 
-	req := SubJsonBody{
-		Id:          s.Id.String(),
-		UserId:      s.UserId.String(),
+	req := SubJSONBody{
+		ID:          s.ID.String(),
+		UserID:      s.UserID.String(),
 		ServiceName: s.ServiceName,
 		Price:       int(s.Price),
 		StartDate:   s.StartDate.Format(TimeLayout),

@@ -17,7 +17,7 @@ type DataConfig struct {
 }
 
 type PathConfig struct {
-	Api        string `yaml:"api" env-required:"true"`
+	API        string `yaml:"api" env-required:"true"`
 	PostSub    string `yaml:"post_sub" env-required:"true"`
 	GetSub     string `yaml:"get_sub" env-required:"true"`
 	PutSub     string `yaml:"put_sub" env-required:"true"`
@@ -27,8 +27,8 @@ type PathConfig struct {
 }
 
 type Config struct {
-	HttpCfg     server.HttpConfig       `yaml:"http"`
-	PostgresCfg postgres.PostgresConfig `yaml:"postgres"`
+	HTTPCfg     server.HTTPConfig       `yaml:"http"`
+	PostgresCfg postgres.Config `yaml:"postgres"`
 	SvcCfg      ServiceConfig           `yaml:"service"`
 	DataCfg     DataConfig              `yaml:"data"`
 	PathCfg     PathConfig              `yaml:"paths"`

@@ -44,7 +44,7 @@ func WithSwagger() RouterOption {
 
 func WithHealthHandler() RouterOption {
 	return func (r chi.Router) {
-		r.Get(HealthPath, func(w http.ResponseWriter, r *http.Request) {
+		r.Get(HealthPath, func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		})
 	}

@@ -3,6 +3,6 @@ package repository
 import "errors"
 
 var (
-	ErrInvalidSubData = errors.New("Invalid subscription data")
-	ErrNoSubIdExists = errors.New("No subscription with such id exists")
+	ErrInvalidSubData = errors.New("invalid subscription data")
+	ErrNoSubIDExists = errors.New("no subscription with such id exists")
 )

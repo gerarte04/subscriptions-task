@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	ErrInternal = errors.New("Internal server error")
+	ErrInternal = errors.New("internal server error")
 
 	errorCodes = map[error]int{
 		repository.ErrInvalidSubData: http.StatusBadRequest,
-		repository.ErrNoSubIdExists: http.StatusNotFound,
+		repository.ErrNoSubIDExists: http.StatusNotFound,
 	}
 )
 

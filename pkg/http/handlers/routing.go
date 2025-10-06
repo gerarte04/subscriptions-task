@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"net/http"
 	pkgMiddleware "subs-service/pkg/http/middleware"
 
 	"github.com/go-chi/chi/v5"
@@ -10,6 +11,7 @@ import (
 
 const (
 	SwaggerPath = "/swagger/*"
+	HealthPath = "/health"
 )
 
 type RouterOption func(r chi.Router)
@@ -37,5 +39,13 @@ func WithRecovery() RouterOption {
 func WithSwagger() RouterOption {
 	return func(r chi.Router) {
 		r.Get(SwaggerPath, httpSwagger.WrapHandler)
+	}
+}
+
+func WithHealthHandler() RouterOption {
+	return func (r chi.Router) {
+		r.Get(HealthPath, func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
 	}
 }

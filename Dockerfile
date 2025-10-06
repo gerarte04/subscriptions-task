@@ -10,6 +10,8 @@ RUN go build -o main cmd/main.go
 
 FROM alpine:3.22 AS runner
 
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 COPY --from=builder /build/main /app/main

@@ -1,10 +1,13 @@
-.PHONY: build_services launch_services stop_services
-
-build_services:
-	docker compose build
+.PHONY: launch_services launch_services_with_tests stop_services build_services
 
 launch_services:
-	docker compose up --force-recreate --abort-on-container-exit
+	docker compose up --force-recreate
+
+launch_services_with_tests:
+	docker compose --profile test up --force-recreate --abort-on-container-exit --exit-code-from tester
 
 stop_services:
 	docker compose down -v
+
+build_services:
+	docker compose build

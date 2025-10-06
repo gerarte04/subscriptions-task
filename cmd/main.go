@@ -45,6 +45,7 @@ func main() {
 		handlers.WithLogger(),
 		handlers.WithRecovery(),
 		handlers.WithSwagger(),
+		handlers.WithHealthHandler(),
 		subHandler.WithSubHandlers(),
 	)
 

@@ -18,7 +18,7 @@ var (
 )
 
 func ProcessCreatingRequestError(w http.ResponseWriter, err error, debugMode bool) {
-	log.Print(err.Error())
+	log.Print("[ERROR] ", err.Error())
 
 	if !debugMode {
 		err = pkgErrors.UnwrapAll(err)
@@ -28,7 +28,7 @@ func ProcessCreatingRequestError(w http.ResponseWriter, err error, debugMode boo
 }
 
 func ProcessError(w http.ResponseWriter, err error, debugMode bool) {
-	log.Print(err.Error())
+	log.Print("[ERROR] ", err.Error())
 
 	if !debugMode {
 		err = pkgErrors.UnwrapAll(err)

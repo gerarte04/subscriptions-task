@@ -25,20 +25,20 @@ func main() {
 	var cfg config.Config
 	pkgConfig.MustLoadConfig(appFlags.ConfigPath, &cfg)
 
-	log.Printf("subs-service server is starting")
+	log.Printf("[INFO] Subscriptions Service is starting")
 
 	pool, err := postgres.NewPostgresPool(cfg.PostgresCfg)
 	if err != nil {
-		log.Fatalf("Failed to connect PostgreSQL: %s", err.Error())
+		log.Fatalf("[ERROR] Failed to connect PostgreSQL: %s", err.Error())
 	}
 
-	log.Printf("Connected to PostgreSQL successfully")
+	log.Printf("[INFO] Connected to PostgreSQL successfully")
 
 	subsRepo := repo.NewSubsRepo(pool)
 	subService := service.NewSubService(subsRepo)
 	subHandler := apiHTTP.NewSubHandler(subService, cfg.PathCfg, cfg.SvcCfg, cfg.DataCfg)
 
-	log.Printf("All services were created successfully")
+	log.Printf("[INFO] All services were created successfully")
 
 	r := chi.NewRouter()
 	handlers.RouteHandlers(r, cfg.PathCfg.API,
@@ -49,9 +49,9 @@ func main() {
 		subHandler.WithSubHandlers(),
 	)
 
-	log.Printf("Starting HTTP server at %s...", cfg.HTTPCfg.Address)
+	log.Printf("[INFO] Starting HTTP server at %s...", cfg.HTTPCfg.Address)
 
 	if err = server.CreateServer(r, cfg.HTTPCfg); err != nil {
-		log.Fatalf("Failed to start server: %s", err.Error())
+		log.Fatalf("[ERROR] Failed to start server: %s", err.Error())
 	}
 }

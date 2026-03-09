@@ -11,5 +11,3 @@ stop_services:
 
 build_services:
 	docker compose build
-
-
